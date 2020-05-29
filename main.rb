@@ -110,7 +110,7 @@ def zipalign_build_artifact(artifact_path, output_artifact_path)
 end
 
 input_artifacts_path = apk_path || aab_path
-input_artifacts_path.split(",").each do |input_artifact_path|
+input_artifacts_path.split("|").each do |input_artifact_path|
     puts "@[command] Signing file: #{input_artifact_path}"
     extname = File.extname(input_artifact_path)
     base_name = File.basename(input_artifact_path, extname)
@@ -133,8 +133,8 @@ input_artifacts_path.split(",").each do |input_artifact_path|
     zipalign_build_artifact(artifact_path, output_artifact_path)
 end
 
-signed_apk_path = Dir.glob("#{ac_output_folder}/**/*-ac-signed.apk").join(",")
-signed_aab_path = Dir.glob("#{ac_output_folder}/**/*-ac-signed.aab").join(",")
+signed_apk_path = Dir.glob("#{ac_output_folder}/**/*-ac-signed.apk").join("|")
+signed_aab_path = Dir.glob("#{ac_output_folder}/**/*-ac-signed.aab").join("|")
 
 puts "Exporting AC_SIGNED_APK_PATH=#{signed_apk_path}"
 puts "Exporting AC_SIGNED_AAB_PATH=#{signed_aab_path}"
