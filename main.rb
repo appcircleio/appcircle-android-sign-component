@@ -109,8 +109,9 @@ def zipalign_build_artifact(artifact_path, output_artifact_path)
     run_command("#{$latest_build_tools}/zipalign -f 4 #{artifact_path} #{output_artifact_path}")
 end
 
-input_artifacts_path = apk_path || aab_path
-input_artifacts_path.split("|").each do |input_artifact_path|
+apks = (apk_path || "").split("|")
+aabs = (aab_path || "").split("|")
+apks.concat(aabs).each do |input_artifact_path|
     puts "@[command] Signing file: #{input_artifact_path}"
     extname = File.extname(input_artifact_path)
     base_name = File.basename(input_artifact_path, extname)
