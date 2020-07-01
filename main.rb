@@ -8,7 +8,13 @@ def get_env_variable(key)
 end
 
 options = {}
-options[:keystore_path] = get_env_variable("AC_ANDROID_KEYSTORE_PATH") || abort('Missing keystore path.')
+options[:keystore_path] = get_env_variable("AC_ANDROID_KEYSTORE_PATH")
+
+if options[:keystore_path].nil?
+    puts "AC_ANDROID_KEYSTORE_PATH is not provided. Skipping step."
+    exit 0
+end
+
 options[:keystore_password] = get_env_variable("AC_ANDROID_KEYSTORE_PASSWORD") || abort('Missing keystore password.')
 options[:alias] = get_env_variable("AC_ANDROID_ALIAS") || abort('Missing alias.')
 options[:alias_password] = get_env_variable("AC_ANDROID_ALIAS_PASSWORD") || abort('Missing alias password.')
@@ -86,11 +92,11 @@ end
 
 def sign_build_artifact(path, options)
     jarsigner_options = "-verbose -sigalg SHA1withRSA -digestalg SHA1"
-    keystore_options = "-keystore #{options[:keystore_path]} "\
-                    "-storepass #{options[:keystore_password]} "\
-                    "-keypass #{options[:alias_password]}"
-    run_command("jarsigner #{jarsigner_options} #{keystore_options} #{path} #{options[:alias]}")
-end 
+    keystore_options = "-keystore \"#{options[:keystore_path]}\" "\
+                    "-storepass \"#{options[:keystore_password]}\" "\
+                    "-keypass \"#{options[:alias_password]}\""
+    run_command("jarsigner #{jarsigner_options} #{keystore_options} #{path} \"#{options[:alias]}\"")
+end
 
 def beatufy_base_name(base_name)
     return base_name.gsub("-unsigned", "") + "-ac-signed"
