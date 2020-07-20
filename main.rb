@@ -118,7 +118,7 @@ end
 apks = (apk_path || "").split("|")
 aabs = (aab_path || "").split("|")
 apks.concat(aabs).each do |input_artifact_path|
-    puts "@[command] Signing file: #{input_artifact_path}"
+    puts "@@[command] Signing file: #{input_artifact_path}"
     extname = File.extname(input_artifact_path)
     base_name = File.basename(input_artifact_path, extname)
     artifact_path = "#{ac_temp}/#{base_name}#{extname}"
