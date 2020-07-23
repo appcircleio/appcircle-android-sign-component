@@ -31,7 +31,7 @@ $signing_file_exts = [".mf", ".rsa", ".dsa", ".ec", ".sf"]
 $latest_build_tools = Dir.glob("#{android_home}/build-tools/*").sort.last
 
 def run_command(command, isLogReturn=false)
-    puts "@[command] #{command}"
+    puts "@@[command] #{command}"
     status = nil
     stdout_str = nil
     stderr_str = nil
@@ -118,7 +118,7 @@ end
 apks = (apk_path || "").split("|")
 aabs = (aab_path || "").split("|")
 apks.concat(aabs).each do |input_artifact_path|
-    puts "@@[command] Signing file: #{input_artifact_path}"
+    puts "Signing file: #{input_artifact_path}"
     extname = File.extname(input_artifact_path)
     base_name = File.basename(input_artifact_path, extname)
     artifact_path = "#{ac_temp}/#{base_name}#{extname}"
