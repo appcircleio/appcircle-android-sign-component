@@ -95,6 +95,8 @@ def sign_build_artifact(path, options, is_v2_sign)
     keystore_options = "-keystore \"#{options[:keystore_path]}\" "\
                     "-storepass \"#{options[:keystore_password]}\" "\
                     "-keypass \"#{options[:alias_password]}\""
+
+                
     if is_v2_sign == "true"
         apksigner_options = "--ks \"#{options[:keystore_path]}\" --ks-pass \"pass:#{options[:keystore_password]}\" --ks-key-alias \"#{options[:alias]}\" --key-pass \"pass:#{options[:alias_password]}\""
         run_command("#{$latest_build_tools}/apksigner sign --in #{path} --out #{path} --debuggable-apk-permitted true #{apksigner_options}")
@@ -137,12 +139,20 @@ apks.concat(aabs).each do |input_artifact_path|
     else
         puts "No signature file (DSA or RSA) found in META-INF, no need artifact unsign."
     end
-    
-    sign_build_artifact(artifact_path, options, is_v2_sign)
 
-    signed_base_name = beatufy_base_name(base_name)
-    output_artifact_path = "#{ac_output_folder}/#{signed_base_name}#{extname}"
-    zipalign_build_artifact(artifact_path, output_artifact_path)
+    if is_v2_sign == "true"
+	    signed_base_name = beatufy_base_name(base_name)
+        output_artifact_path = "#{ac_output_folder}/#{signed_base_name}#{extname}"
+	    zipalign_build_artifact(artifact_path, output_artifact_path)
+	    
+	    sign_build_artifact(output_artifact_path, options, is_v2_sign)
+    else
+	    sign_build_artifact(artifact_path, options, is_v2_sign)
+
+	    signed_base_name = beatufy_base_name(base_name)
+	    output_artifact_path = "#{ac_output_folder}/#{signed_base_name}#{extname}"
+	    zipalign_build_artifact(artifact_path, output_artifact_path)
+    end
 end
 
 signed_apk_path = Dir.glob("#{ac_output_folder}/**/*-ac-signed.apk").join("|")
