@@ -25,6 +25,8 @@ ac_temp = get_env_variable("AC_TEMP_DIR") || abort('Missing AC_TEMP_DIR variable
 
 apk_path = get_env_variable("AC_APK_PATH")
 aab_path = get_env_variable("AC_AAB_PATH")
+is_v2_sign = ENV["AC_V2_SIGN"] || "false"
+
 apk_path || aab_path || abort("Missing apk/aab path.")
 
 $signing_file_exts = [".mf", ".rsa", ".dsa", ".ec", ".sf"]
@@ -60,7 +62,6 @@ def filter_meta_files(path)
     return run_command("#{$latest_build_tools}/aapt ls #{path} | grep META-INF", true).split("\n")
 end
 
-
 def copy_artifact(current_path, dest_path)
     FileUtils.cp(current_path, dest_path)
 end
@@ -90,12 +91,17 @@ def unsign_artifact(path, files)
     run_command("#{$latest_build_tools}/aapt remove #{path} #{signing_files}")
 end
 
-def sign_build_artifact(path, options)
-    jarsigner_options = "-verbose -sigalg SHA1withRSA -digestalg SHA1"
+def sign_build_artifact(path, options, is_v2_sign)
     keystore_options = "-keystore \"#{options[:keystore_path]}\" "\
                     "-storepass \"#{options[:keystore_password]}\" "\
                     "-keypass \"#{options[:alias_password]}\""
-    run_command("jarsigner #{jarsigner_options} #{keystore_options} #{path} \"#{options[:alias]}\"")
+    if is_v2_sign == "true"
+        apksigner_options = "--ks \"#{options[:keystore_path]}\" --ks-pass \"pass:#{options[:keystore_password]}\" --ks-key-alias \"#{options[:alias]}\" --key-pass \"pass:#{options[:alias_password]}\""
+        run_command("#{$latest_build_tools}/apksigner sign --in #{path} --out #{path} --debuggable-apk-permitted true #{apksigner_options}")
+    else
+        jarsigner_options = "-verbose -sigalg SHA1withRSA -digestalg SHA1"
+        run_command("jarsigner #{jarsigner_options} #{keystore_options} #{path} \"#{options[:alias]}\"")
+    end
 end
 
 def beatufy_base_name(base_name)
@@ -132,8 +138,7 @@ apks.concat(aabs).each do |input_artifact_path|
         puts "No signature file (DSA or RSA) found in META-INF, no need artifact unsign."
     end
     
-    sign_build_artifact(artifact_path, options)
-    verify_build_artifact(artifact_path)
+    sign_build_artifact(artifact_path, options, is_v2_sign)
 
     signed_base_name = beatufy_base_name(base_name)
     output_artifact_path = "#{ac_output_folder}/#{signed_base_name}#{extname}"
