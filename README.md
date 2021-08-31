@@ -12,6 +12,7 @@ Required Input Variables
 - `$AC_ANDROID_KEYSTORE_PASSWORD`: Keystore password. This value will be auto-generated depending on your keystore file selection
 - `$AC_ANDROID_ALIAS`: Alis name. This value will be auto-generated depending on your build configuration
 - `$AC_ANDROID_ALIAS_PASSWORD`: Alias password. This value will be auto-generated depending on your build configuration
+- `$AC_V2_SIGN`: Defaults to false. Set true if the signature should be done using apksigner instead of jarsigner. [Apps targeting Android 11 require APK Signature Scheme v2](https://developer.android.com/about/versions/11/behavior-changes-11#minimum-signature-scheme)
 
 Output Variables
 - `$AC_SIGNED_APK_PATH`: Path for the signed APK file output
