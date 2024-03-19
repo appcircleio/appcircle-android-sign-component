@@ -94,7 +94,7 @@ end
 def sign_build_artifact(path, options, is_v2_sign)
     keystore_options = "-keystore \"#{options[:keystore_path]}\" "\
                     "-storepass \"#{options[:keystore_password]}\" "\
-                    "-keypass \"#{options[:alias_password]}\""
+                    "-keypass \"#{options[:alias_password]}\"".gsub('$', '\$')
 
                 
     if is_v2_sign == "true"
