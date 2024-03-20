@@ -93,12 +93,12 @@ end
 
 def sign_build_artifact(path, options, is_v2_sign)
     keystore_options = "-keystore \"#{options[:keystore_path]}\" "\
-                    "-storepass \"#{options[:keystore_password]}\" "\
-                    "-keypass \"#{options[:alias_password]}\""
+                    "-storepass \'#{options[:keystore_password]}\' "\
+                    "-keypass \'#{options[:alias_password]}\'"
 
                 
     if is_v2_sign == "true"
-        apksigner_options = "--ks \"#{options[:keystore_path]}\" --ks-pass \"pass:#{options[:keystore_password]}\" --ks-key-alias \"#{options[:alias]}\" --key-pass \"pass:#{options[:alias_password]}\""
+        apksigner_options = "--ks \"#{options[:keystore_path]}\" --ks-pass \'pass:#{options[:keystore_password]}\' --ks-key-alias \"#{options[:alias]}\" --key-pass \'pass:#{options[:alias_password]}\'"
         run_command("#{$latest_build_tools}/apksigner sign --in #{path} --out #{path} --debuggable-apk-permitted true #{apksigner_options}")
     else
         jarsigner_options = "-verbose -sigalg SHA1withRSA -digestalg SHA1"
