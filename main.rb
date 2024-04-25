@@ -27,7 +27,7 @@ apk_path = get_env_variable("AC_APK_PATH")
 aab_path = get_env_variable("AC_AAB_PATH")
 is_v2_sign = ENV["AC_V2_SIGN"] || "false"
 
-apk_path || aab_path || abort("Missing apk/aab path.")
+apk_path || aab_path || abort("Missing APK/AAB path.")
 
 $signing_file_exts = [".mf", ".rsa", ".dsa", ".ec", ".sf"]
 $latest_build_tools = Dir.glob("#{android_home}/build-tools/*").sort.last
