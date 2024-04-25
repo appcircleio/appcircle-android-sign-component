@@ -59,7 +59,7 @@ def run_command(command, isLogReturn=false)
 end
 
 def filter_meta_files(path) 
-    return run_command("#{$latest_build_tools}/aapt ls #{path} | grep META-INF", true).split("\n")
+    return run_command("#{$latest_build_tools}/aapt ls \"#{path}\" | grep META-INF", true).split("\n")
 end
 
 def copy_artifact(current_path, dest_path)
@@ -88,7 +88,7 @@ end
 
 def unsign_artifact(path, files) 
     signing_files = get_signing_files(files)
-    run_command("#{$latest_build_tools}/aapt remove #{path} #{signing_files}")
+    run_command("#{$latest_build_tools}/aapt remove \"#{path}\" #{signing_files}")
 end
 
 def sign_build_artifact(path, options, is_v2_sign)
@@ -99,10 +99,10 @@ def sign_build_artifact(path, options, is_v2_sign)
                 
     if is_v2_sign == "true"
         apksigner_options = "--ks \"#{options[:keystore_path]}\" --ks-pass \'pass:#{options[:keystore_password]}\' --ks-key-alias \"#{options[:alias]}\" --key-pass \'pass:#{options[:alias_password]}\'"
-        run_command("#{$latest_build_tools}/apksigner sign --in #{path} --out #{path} --debuggable-apk-permitted true #{apksigner_options}")
+        run_command("#{$latest_build_tools}/apksigner sign --in \"#{path}\" --out \"#{path}\" --debuggable-apk-permitted true #{apksigner_options}")
     else
         jarsigner_options = "-verbose -sigalg SHA1withRSA -digestalg SHA1"
-        run_command("jarsigner #{jarsigner_options} #{keystore_options} #{path} \"#{options[:alias]}\"")
+        run_command("jarsigner #{jarsigner_options} #{keystore_options} \"#{path}\" \"#{options[:alias]}\"")
     end
 end
 
@@ -111,7 +111,7 @@ def beatufy_base_name(base_name)
 end
 
 def verify_build_artifact(artifact_path)
-    output = run_command("jarsigner -verify -verbose -certs #{artifact_path}")
+    output = run_command("jarsigner -verify -verbose -certs \"#{artifact_path}\"")
     if output.include?("jar is unsigned.")
         abort("Failed to verify build artifact.")
     end
@@ -120,7 +120,7 @@ end
 
 def zipalign_build_artifact(artifact_path, output_artifact_path)
     puts "Zipalign build artifact..."
-    run_command("#{$latest_build_tools}/zipalign -f 4 #{artifact_path} #{output_artifact_path}")
+    run_command("#{$latest_build_tools}/zipalign -f 4 \"#{artifact_path}\" \"#{output_artifact_path}\"")
 end
 
 apks = (apk_path || "").split("|")
