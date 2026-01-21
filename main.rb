@@ -96,13 +96,18 @@ def sign_build_artifact(path, options, is_v2_sign)
                     "-storepass \'#{options[:keystore_password]}\' "\
                     "-keypass \'#{options[:alias_password]}\'"
 
-                
-    if is_v2_sign == "true"
-        apksigner_options = "--ks \"#{options[:keystore_path]}\" --ks-pass \'pass:#{options[:keystore_password]}\' --ks-key-alias \"#{options[:alias]}\" --key-pass \'pass:#{options[:alias_password]}\'"
-        run_command("#{$latest_build_tools}/apksigner sign --in \"#{path}\" --out \"#{path}\" --debuggable-apk-permitted true #{apksigner_options}")
-    else
+    extname = File.extname(path).downcase
+
+    if is_v2_sign == "true" && extname == ".aab"
+        puts "WARNING: AAB files cannot be signed with v2 signing(apksigner). Using jarsigner instead."
+    end
+
+    if is_v2_sign == "false" || extname == ".aab"
         jarsigner_options = "-verbose -sigalg SHA1withRSA -digestalg SHA1"
         run_command("jarsigner #{jarsigner_options} #{keystore_options} \"#{path}\" \"#{options[:alias]}\"")
+    else
+        apksigner_options = "--ks \"#{options[:keystore_path]}\" --ks-pass \'pass:#{options[:keystore_password]}\' --ks-key-alias \"#{options[:alias]}\" --key-pass \'pass:#{options[:alias_password]}\'"
+        run_command("#{$latest_build_tools}/apksigner sign --in \"#{path}\" --out \"#{path}\" --debuggable-apk-permitted true #{apksigner_options}")
     end
 end
 
