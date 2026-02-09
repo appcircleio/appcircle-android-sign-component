@@ -99,7 +99,7 @@ def sign_build_artifact(path, options, is_v2_sign)
     extname = File.extname(path).downcase
 
     if is_v2_sign == "true" && extname == ".aab"
-        puts "WARNING: AAB files cannot be signed with v2 signing(apksigner). Using jarsigner instead."
+        puts "WARNING: AAB files cannot be signed with v2 signing (apksigner). Using jarsigner instead."
     end
 
     if is_v2_sign == "false" || extname == ".aab"
