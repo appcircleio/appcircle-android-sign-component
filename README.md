@@ -17,3 +17,17 @@ Required Input Variables
 Output Variables
 - `$AC_SIGNED_APK_PATH`: Path for the signed APK file output
 - `$AC_SIGNED_AAB_PATH`: Path for the signed App Bundle file output
+
+## Running tests
+
+```
+ruby test/main_test.rb
+```
+
+or
+
+```
+rake test
+```
+
+The tests run `main.rb` in a subprocess against stub `aapt`, `zipalign`, `apksigner` and `jarsigner` executables, so no Android SDK or JDK is required.
